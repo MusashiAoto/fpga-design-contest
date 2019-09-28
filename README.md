@@ -17,3 +17,5 @@ Project for FPT2019 FPGA Design Competition
 For more details about the FPGA Design Competition,  
 See:  
 [FPT2019 FPGA Design Competition](http://fpt19.tju.edu.cn/Contest/FPT2019_FPGA_Design_Competition.htm)
+
+[Training_data is here]https://drive.google.com/drive/folders/1a9cq_ItBH9HDArvTY21zHc-WfdViy5hT?usp=sharing

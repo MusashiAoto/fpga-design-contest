@@ -17,7 +17,7 @@ def chokan(img):
     return warp
     #cv2.imshow('transform', warp)
     #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()aaa
     #cv2.imwrite("convert.png",warp)
 
 

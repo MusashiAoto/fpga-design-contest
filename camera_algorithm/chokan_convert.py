@@ -2,12 +2,15 @@ import cv2
 import numpy as np
 import time
 
-out_sizeX=100
+# out_sizeX=100
+# out_sizeY=int(out_sizeX*1.6)
+height=240
+width=320
+out_sizeX=int(width/32*21)- int(width/32*10)
 out_sizeY=int(out_sizeX*1.6)
 def chokan(img):
     img1=img
-    height=240
-    width=320
+    
     #image = np.zeros((700, 700, 3), np.uint8)
     src = np.array([[int(width/32*10),40],[int(width/32*21),40],[0,height],[width,height]],np.float32)
     dst = np.array([[0,0],[out_sizeX,0],[int(out_sizeX/5),out_sizeY],[int(out_sizeX/5*4),out_sizeY]],np.float32)
@@ -15,6 +18,7 @@ def chokan(img):
     M = cv2.getPerspectiveTransform(src, dst)
     warp = cv2.warpPerspective(img1.copy(), M, (out_sizeX, out_sizeY))
 
+    #cv2.imwrite("convert.png",warp)
     return warp
     #cv2.imshow('transform', warp)
     #cv2.waitKey(0)
@@ -83,19 +87,21 @@ convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (out_sizeX, out_sizeY))
 while(cap.isOpened()):
 
     #img1 = cv2.imread("frame.png", cv2.IMREAD_COLOR)
-    # cv2.imshow('transform', img1)
-    # cv2.waitKey(0)
+    
     # cv2.destroyAllWindows()
 
     ret,img1= cap.read()
     if ret==False:
         break
     #cv2.imshow('frame',img1)
+    
     frame=img1
     fractal_controll,frame,contraststate= changecontrast(frame,contraststate)
     ret,edge_lap=cv2.threshold(frame, 150, 255, cv2.THRESH_BINARY)
     #cv2.imshow('frame',frame)
     out=chokan(edge_lap)
+    #cv2.imshow('transform',out)
+    #cv2.waitKey(0)
     out = cv2.cvtColor(out, cv2.COLOR_GRAY2BGR)
     convert_out.write(out)
     #time.sleep(0.05)

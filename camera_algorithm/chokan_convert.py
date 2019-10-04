@@ -2,23 +2,24 @@ import cv2
 import numpy as np
 import time
 
-
+out_sizeX=100
+out_sizeY=int(out_sizeX*1.6)
 def chokan(img):
     img1=img
     height=240
     width=320
-    image = np.zeros((700, 700, 3), np.uint8)
-    src = np.array([[100,40],[210,40],[0,239],[width,239]],np.float32)
-    dst = np.array([[0,0],[500,0],[int(500/5),800],[int(500/5*4),800]],np.float32)
+    #image = np.zeros((700, 700, 3), np.uint8)
+    src = np.array([[int(width/32*10),40],[int(width/32*21),40],[0,height],[width,height]],np.float32)
+    dst = np.array([[0,0],[out_sizeX,0],[int(out_sizeX/5),out_sizeY],[int(out_sizeX/5*4),out_sizeY]],np.float32)
 
     M = cv2.getPerspectiveTransform(src, dst)
-    warp = cv2.warpPerspective(img1.copy(), M, (500, 800))
+    warp = cv2.warpPerspective(img1.copy(), M, (out_sizeX, out_sizeY))
 
     return warp
     #cv2.imshow('transform', warp)
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()aaa
-    #cv2.imwrite("convert.png",warp)
+    #cv2.imwrite("convert.png",warp)aa
 
 
 def changecontrast(frame,contraststate):
@@ -75,9 +76,9 @@ fps=30
 Height=240
 Width=320
 
-cap = cv2.VideoCapture("../output2.m4v")
+cap = cv2.VideoCapture("../test_movie.m4v")
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
-convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (500,800))
+convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (out_sizeX, out_sizeY))
 
 while(cap.isOpened()):
 

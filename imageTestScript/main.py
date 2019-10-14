@@ -1,4 +1,5 @@
 import os
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 import keras
@@ -23,31 +24,24 @@ from tqdm import tqdm
 import config as cf
 from data_loader import DataLoader
 #from fcn_seg import model
-from vgg16 import model
+from  MobileNet import model
+#from vgg16 import model
+#from vgg16 import resNet50 as model
+#from vgg16 import model_handmade as model
 #from network import model
 
 class Main_train():
-
 	def __init__(self):
 		pass
 
-
 	def train(self):
-
 		## Load network model
 		self.net = model()
 		#self.net = network.Mymodel()
 
 		for layer in self.net.layers:
 			layer.trainable = True
-
-		#for layer in self.net.layers[-10:]:
-			#layer.trainable = True
-
-		iii = 0
-		for layer in self.net.layers[-10:]:
-			iii+=1
-			print(iii,layer.get_config())
+			print(layer.get_config())
 
 		self.net.summary()
 		#keras.utils.plot_model(self.net, to_file='model.png')
@@ -82,7 +76,7 @@ class Main_train():
 			train_loss = history[0]
 			train_acc = history[1]
 
-			if step % 10 == 0 or step == 1:
+			if step % cf.SvStep == 0 or step == 1:
 				x_test, y_test = dl_test.get_minibatch(shuffle=True)
 				#y_test = y_test.reshape((y_test.shape[0], -1, cf.Class_num))
 				loss, acc = self.net.evaluate(
@@ -195,13 +189,15 @@ def arg_parse():
 	parser = argparse.ArgumentParser(description='CNN implemented with Keras')
 	parser.add_argument('--train', dest='train', action='store_true')
 	parser.add_argument('--test', dest='test', action='store_true')
+	parser.add_argument('-ti','--trainImagePath')
+	parser.add_argument('-si','--testImagePath')
 	args = parser.parse_args()
 	return args
 
 
 if __name__ == '__main__':
-
 	args = arg_parse()
+	cf.setImage(args.trainImagePath,args.testImagePath)
 
 	if args.train:
 		main = Main_train()

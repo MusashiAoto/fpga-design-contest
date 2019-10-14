@@ -1,0 +1,14 @@
+Read buffers     : 0
+                     brightness (int)    : min=-64 max=64 step=1 default=0 value=0
+                       contrast (int)    : min=0 max=100 step=1 default=57 value=57
+                     saturation (int)    : min=0 max=100 step=1 default=72 value=72
+                            hue (int)    : min=-180 max=180 step=1 default=0 value=0
+ white_balance_temperature_auto (bool)   : default=1 value=0
+                          gamma (int)    : min=100 max=500 step=1 default=300 value=300
+           power_line_frequency (menu)   : min=0 max=2 default=0 value=0
+      white_balance_temperature (int)    : min=2800 max=6500 step=10 default=4600 value=4600
+                      sharpness (int)    : min=0 max=100 step=1 default=92 value=92
+         backlight_compensation (int)    : min=0 max=2 step=1 default=1 value=1
+                  exposure_auto (menu)   : min=0 max=3 default=3 value=1
+              exposure_absolute (int)    : min=50 max=10000 step=1 default=166 value=50
+         exposure_auto_priority (bool)   : default=0 value=1

@@ -1,4 +1,7 @@
 # imageTestScript 
+## Trainning command
+--in imageTest
+--python3 main.py --train -ti imageMK3/Train -si imageMK3/Test
 ## Image TEST
 - test2.py hoge.h5 testImagePath
     - 自動トリミング + edge抽出

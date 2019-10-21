@@ -31,8 +31,8 @@ class DataLoader():
         
         for dir_path in dir_paths:
             
-            files1 = glob.glob(dir_path + '/*.jpg')
-            files2 = glob.glob(dir_path + '/*.png')
+            files1 = glob.glob(dir_path + '/*.bmp')
+            files2 = glob.glob(dir_path + '/*.bmp')
             files = files1 + files2
             
             load_count = 0

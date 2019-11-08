@@ -45,6 +45,15 @@ convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (Width,Height))
 before=160
 after=0
 
+
+def curvedetect():
+    pxL = out[int(Height/4*3),int(Width/4)]
+    pxR = out[int(Height/2),int(Width/4*3)]
+    #print(pxL)
+    #print(pxR)
+    if pxR==pxL==255:
+        print("curve")
+
 while(cap.isOpened()):
 
     #img1 = cv2.imread("frame.png", cv2.IMREAD_COLOR)
@@ -65,13 +74,19 @@ while(cap.isOpened()):
         out=otsu
     #print(ret2)
 
+
+
+    curvedetect()
     out = cv2.cvtColor(out, cv2.COLOR_GRAY2BGR)
-    out= cv2.line(out,(int(Width/4),int(Height/2)),(int(Width/4),Height),(255,0, 0),5)
-    out= cv2.line(out,(0,int(Height/4*3)),(Width,int(Height/4*3)),(255,0, 0),5)
+    #out= cv2.line(out,(int(Width/4),int(Height/2)),(int(Width/4),Height),(255,0, 0),5)
+    #out= cv2.line(out,(0,int(Height/4*3)),(Width,int(Height/4*3)),(255,0, 0),5)
     
-    out= cv2.line(out,(int(Width/4*3),0),(int(Width/4*3),Height),(0,255, 0),5)
-    out= cv2.line(out,(0,int(Height/2)),(Width,int(Height/2)),(0,255, 0),5)
+    #out= cv2.line(out,(int(Width/4*3),0),(int(Width/4*3),Height),(0,255, 0),5)
+    #out= cv2.line(out,(0,int(Height/2)),(Width,int(Height/2)),(0,255, 0),5)
 
-
+    cv2.imshow("window_name", out)
+    #time.sleep(0.05)
     convert_out.write(out)
+    cv2.waitKey(1)
 convert_out.release()
+cv2.destroyAllWindows()

@@ -42,7 +42,8 @@ cap = cv2.VideoCapture("test_movie.m4v")
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
 convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (Width,Height))
 
-
+before=160
+after=0
 
 while(cap.isOpened()):
 
@@ -55,13 +56,22 @@ while(cap.isOpened()):
     if ret==False:
         break
     out=chokan(img1)
+    out  = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+    ret2, otsu = cv2.threshold(out, 0, 255, cv2.THRESH_OTSU)
+    if abs(ret2-before)>50:
+        ret,  out= cv2.threshold(out, before, 255, cv2.THRESH_BINARY)
+    else:
+        before=ret2
+        out=otsu
+    #print(ret2)
 
-    out= cv2.line(out,(int(Width/4),0),(int(Width/4),Height),(255,0, 0),5)
+    out = cv2.cvtColor(out, cv2.COLOR_GRAY2BGR)
+    out= cv2.line(out,(int(Width/4),int(Height/2)),(int(Width/4),Height),(255,0, 0),5)
     out= cv2.line(out,(0,int(Height/4*3)),(Width,int(Height/4*3)),(255,0, 0),5)
     
     out= cv2.line(out,(int(Width/4*3),0),(int(Width/4*3),Height),(0,255, 0),5)
     out= cv2.line(out,(0,int(Height/2)),(Width,int(Height/2)),(0,255, 0),5)
-    
+
 
     convert_out.write(out)
 convert_out.release()

@@ -21,12 +21,12 @@ File_extensions = ['.jpg', '.png','.bmp']
 
 
 ## Training config
-Step = 100
-SvStep = 2
-Minibatch = 32
+Step = 10
+SvStep = 1
+Minibatch = 2
 Learning_rate = 0.001
 
-Test_Minibatch = 32
+Test_Minibatch = 2
 
 ## Data augmentation
 Horizontal_flip = False

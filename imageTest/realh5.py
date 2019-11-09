@@ -6,39 +6,62 @@ Height = int(320/4)
 Width = int(480/4)
 Class_label = ['T', 'curve', 'cross', 'oudan', 'strate', 'stopLine']
 Class_num = len(Class_label)
+from InceptionResNetV2 import model as model
 
-def model():
-    from keras.models import Model
-    from keras.layers import Dense, Dropout, Flatten
-    from keras.applications.vgg16 import VGG16
-    model = VGG16(include_top=False,
-                  weights=None,
-                  input_shape=(Height, Width, 3))
+# def model():
+#     from keras.models import Model
+#     from keras.layers import Dense, Dropout, Flatten
+#     from keras.applications.inception_resnet_v2 import InceptionResNetV2
+#     model = InceptionResNetV2(include_top=False,
+#                                 weights=None,
+#                                 input_shape=(Height, Width, 3))
 
-    last = model.output
-    x = Flatten()(last)
-    x = Dense(4096, activation='relu')(x)
-    x = Dropout(0.5)(x)
-    x = Dense(4096, activation='relu')(x)
-    x = Dropout(0.5)(x)
-    x = Dense(Class_num, activation='softmax')(x)
-    model = Model(model.input, x)
-    return model
+
+#     last = model.output
+#     x = Flatten()(last)
+#     x = Dense(4096, activation='relu')(x)
+#     x = Dropout(0.5)(x)
+#     x = Dense(4096, activation='relu')(x)
+#     x = Dropout(0.5)(x)
+#     x = Dense(Class_num, activation='softmax')(x)
+#     model = Model(model.input, x)
+#     return model
+
+    # from keras.models import Model
+    # from keras.layers import Dense, Dropout, Flatten
+    # from keras.applications.vgg16 import VGG16
+    # model = VGG16(include_top=False,
+    #               weights=None,
+    #               input_shape=(Height, Width, 3))
+
+    # last = model.output
+    # x = Flatten()(last)
+    # x = Dense(4096, activation='relu')(x)
+    # x = Dropout(0.5)(x)
+    # x = Dense(4096, activation='relu')(x)
+    # x = Dropout(0.5)(x)
+    # x = Dense(Class_num, activation='softmax')(x)
+    # model = Model(model.input, x)
+    # return model
 
 def readAndTrimming(img):
-    aap = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     size = img.shape
     img = img[int(size[0]/2):-1,:]
 
     img = cv2.Canny(img, 105, 110)
     img = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
     img = cv2.resize(img, (Width, Height))
+    #print("capopen")
     return img
 
-def test(h5,imgPath):
+def test(imgPath):
     net = model()
-    net.load_weights(h5)
+    print("{}層".format(len(net.layers)))
+    #print("capopen")
+    net.load_weights("out/20191109150343_e10_CNN.h5",by_name=False)
 
+    
     cap = cv2.VideoCapture(imgPath)
     # print("capopen")
 
@@ -72,4 +95,4 @@ def test(h5,imgPath):
     cv2.destroyAllWindows()
     cap.release()
 
-test(sys.argv[1],sys.argv[2])
+test(sys.argv[1])

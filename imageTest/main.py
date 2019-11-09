@@ -112,7 +112,7 @@ class Main_test():
 		## Load network model
 		self.net = model()
 
-		self.net.load_weights(cf.Save_path)
+		self.net.load_weights("out/20191109150343_e10_CNN.h5")
 
 		print('Test start !')
 

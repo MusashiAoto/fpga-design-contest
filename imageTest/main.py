@@ -24,17 +24,26 @@ from tqdm import tqdm
 import config as cf
 from data_loader import DataLoader
 #from fcn_seg import model
-from  MobileNet import model
+from InceptionResNetV2 import model
 #from vgg16 import model
 #from vgg16 import resNet50 as model
 #from vgg16 import model_handmade as model
 #from network import model
 
 class Main_train():
+
 	def __init__(self):
 		pass
 
 	def train(self):
+		
+		
+		import tensorflow as tf
+
+		config = tf.ConfigProto()
+		config.gpu_options.allow_growth = True
+		session = tf.Session(config=config)
+
 		## Load network model
 		self.net = model()
 		#self.net = network.Mymodel()

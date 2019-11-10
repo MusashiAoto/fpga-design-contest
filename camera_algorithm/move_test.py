@@ -123,6 +123,12 @@ def stopdetect(out):
         print("stop")
 
 
+def nomaldetect(out):
+
+    pxL = out[int(Height/8*7),int(Width/4)+5]#kokodechosei
+
+    if pxL==255:
+        print("chosei")
 
 frame_cout=0
 while(cap.isOpened()):
@@ -158,7 +164,8 @@ while(cap.isOpened()):
     # elif rt3>rt2 and rt3>rt1:
     #     print("T")
     out=curvedetect(out)
-    stopdetect(out)
+    #stopdetect(out)
+    nomaldetect(out)
     out = cv2.cvtColor(out, cv2.COLOR_GRAY2BGR)
     # out = cv2.line(out,(int(Width/4),int(Height/2)),(int(Width/4),Height),(255,0, 0),5)
     # out = cv2.line(out,(0,int(Height/4*3)),(Width,int(Height/4*3)),(255,0, 0),5)

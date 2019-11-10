@@ -140,9 +140,9 @@ def readmap(map):
     
 
     f = open(map)
-    data1 = f.read()  # ファイル終端まで全て読んだデータを返す
+    data1 = f.read() 
     f.close()
-    #print type(data1) # 文字列データ
+
     lines1 = data1.split('\n')
 
     for i in lines1:
@@ -198,24 +198,28 @@ while(cap.isOpened()):
     #----------------Detectors--------------
 
 
-    if navi=="「":
+    if navi=="r":
         D=curvedetect(out)
         if D==1:
             print(angle)
+            tar_cnt=tar_cnt+2
             navi,angle=target[tar_cnt]
-            tar_cnt+=1
-    elif navi=="ト":
+            print(navi)
+            #print(target)
+            break
+    elif navi=="t":
         #detectT
         if D==1:
             print(angle)
-            navi,angle=target[tar_cnt]
             tar_cnt+=1
-    elif navi=="ー":
+            navi,angle=target[tar_cnt]
+    elif navi=="-":
         D=stopdetect(out)
         if D==1:
             print(angle)
-            navi,angle=target[tar_cnt]
             tar_cnt+=1
+            navi,angle=target[tar_cnt]
+    
     #out=curvedetect(out)
     #stopdetect(out)
     #nomaldetect(out)

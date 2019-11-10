@@ -154,14 +154,14 @@ map = "yosen_map.txt"
 readmap(map)
 
 
-
+tar_cnt=0
+navi,angle=target[tar_cnt]
 while(cap.isOpened()):
     frame_cout+=1
     if frame_cout==1:
-        tar_cnt=0
+        
         print("START")
-        navi,angle=target[tar_cnt]
-        tar_cnt+=1
+
 
 
     #img1 = cv2.imread("frame.png", cv2.IMREAD_COLOR)
@@ -206,7 +206,7 @@ while(cap.isOpened()):
             navi,angle=target[tar_cnt]
             print(navi)
             #print(target)
-            break
+            
     elif navi=="t":
         #detectT
         if D==1:

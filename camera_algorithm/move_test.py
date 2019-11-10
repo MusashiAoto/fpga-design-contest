@@ -13,7 +13,7 @@ Xpoint=145
 avecontrast=0
 contraststate=0
 fps=30
-Height=800
+Height=850
 Width=500
 magaru= cv2.imread("image/curve.png" , 0)
 oudan = cv2.imread("image/oudan.png" , 0)
@@ -105,6 +105,25 @@ def curvedetect(out):
 
 
     return out
+
+def stopdetect(out):
+    out = out[int(Height/2):int(Height/2+20),int(Width/4):int(Width/4*3)]
+
+    
+    #print(int(Height/2),int(Width/4),int(Height/2+20),int(Width/4*3))
+    #cv2.imwrite("aaa.png",out)
+    cv2.imshow("box", out)
+    cv2.waitKey(1)
+    binary = cv2.inRange(out, 254, 255)
+
+    # 画素が1の画素数を数える。
+    cnt = cv2.countNonZero(binary)
+
+    if cnt>4000:
+        print("stop")
+
+
+
 frame_cout=0
 while(cap.isOpened()):
     frame_cout+=1
@@ -128,17 +147,18 @@ while(cap.isOpened()):
     #print(ret2)
     
 
-    rt1=detect(out,magaru)
-    rt2=detect(out,oudan)
-    rt3=detect(out,rT)
+    # rt1=detect(out,magaru)
+    # rt2=detect(out,oudan)
+    # rt3=detect(out,rT)
 
-    if rt1>rt2 and rt1>rt3:
-        print("curve")
-    elif rt2>rt1 and rt2>rt3:
-        print("oudan")
-    elif rt3>rt2 and rt3>rt1:
-        print("T")
-    #out=curvedetect(out)
+    # if rt1>rt2 and rt1>rt3:
+    #     print("curve")
+    # elif rt2>rt1 and rt2>rt3:
+    #     print("oudan")
+    # elif rt3>rt2 and rt3>rt1:
+    #     print("T")
+    out=curvedetect(out)
+    stopdetect(out)
     out = cv2.cvtColor(out, cv2.COLOR_GRAY2BGR)
     # out = cv2.line(out,(int(Width/4),int(Height/2)),(int(Width/4),Height),(255,0, 0),5)
     # out = cv2.line(out,(0,int(Height/4*3)),(Width,int(Height/4*3)),(255,0, 0),5)

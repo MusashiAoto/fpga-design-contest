@@ -18,6 +18,9 @@ Width=500
 magaru= cv2.imread("image/curve.png" , 0)
 oudan = cv2.imread("image/oudan.png" , 0)
 rT= cv2.imread("image/T.png" , 0)
+
+
+front_time=time.time()
 def detect(ip,detect_source):
 
     # 対象画像を指定
@@ -104,7 +107,7 @@ def curvedetect(out):
         #out=cv2.putText(out, 'Curve', (300, 170), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), thickness=2)
 
 
-    return out
+        return 1
 
 def stopdetect(out):
     out = out[int(Height/2):int(Height/2+20),int(Width/4):int(Width/4*3)]
@@ -121,6 +124,7 @@ def stopdetect(out):
 
     if cnt>4000:
         print("stop")
+        return 1
 
 
 def nomaldetect(out):
@@ -131,8 +135,35 @@ def nomaldetect(out):
         print("chosei")
 
 frame_cout=0
+target=[]
+def readmap(map):
+    
+
+    f = open(map)
+    data1 = f.read()  # ファイル終端まで全て読んだデータを返す
+    f.close()
+    #print type(data1) # 文字列データ
+    lines1 = data1.split('\n')
+
+    for i in lines1:
+
+        target.append(i.split(','))
+    
+
+map = "yosen_map.txt"
+readmap(map)
+
+
+
 while(cap.isOpened()):
     frame_cout+=1
+    if frame_cout==1:
+        tar_cnt=0
+        print("START")
+        navi,angle=target[tar_cnt]
+        tar_cnt+=1
+
+
     #img1 = cv2.imread("frame.png", cv2.IMREAD_COLOR)
     # cv2.imshow('transform', img1)
     # cv2.waitKey(0)
@@ -163,9 +194,34 @@ while(cap.isOpened()):
     #     print("oudan")
     # elif rt3>rt2 and rt3>rt1:
     #     print("T")
-    out=curvedetect(out)
+
+    #----------------Detectors--------------
+
+
+    if navi=="「":
+        D=curvedetect(out)
+        if D==1:
+            print(angle)
+            navi,angle=target[tar_cnt]
+            tar_cnt+=1
+    elif navi=="ト":
+        #detectT
+        if D==1:
+            print(angle)
+            navi,angle=target[tar_cnt]
+            tar_cnt+=1
+    elif navi=="ー":
+        D=stopdetect(out)
+        if D==1:
+            print(angle)
+            navi,angle=target[tar_cnt]
+            tar_cnt+=1
+    #out=curvedetect(out)
     #stopdetect(out)
-    nomaldetect(out)
+    #nomaldetect(out)
+
+
+
     out = cv2.cvtColor(out, cv2.COLOR_GRAY2BGR)
     # out = cv2.line(out,(int(Width/4),int(Height/2)),(int(Width/4),Height),(255,0, 0),5)
     # out = cv2.line(out,(0,int(Height/4*3)),(Width,int(Height/4*3)),(255,0, 0),5)

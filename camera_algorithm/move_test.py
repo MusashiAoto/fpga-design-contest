@@ -115,8 +115,8 @@ def stopdetect(out):
     
     #print(int(Height/2),int(Width/4),int(Height/2+20),int(Width/4*3))
     #cv2.imwrite("aaa.png",out)
-    cv2.imshow("box", out)
-    cv2.waitKey(1)
+    #cv2.imshow("box", out)
+    #cv2.waitKey(1)
     binary = cv2.inRange(out, 254, 255)
 
     # 画素が1の画素数を数える。
@@ -125,6 +125,29 @@ def stopdetect(out):
     if cnt>4000:
         print("stop")
         return 1
+
+def Tdetect(out):
+    g=250
+    h=30
+    out1 = out[231+g:390+g,374+h:410+h]
+    out2 = out[298+g:333+g,374+h:500+h]
+    
+    #print(int(Height/2),int(Width/4),int(Height/2+20),int(Width/4*3))
+    #cv2.imwrite("aaa.png",out)
+    cv2.imshow("box1", out1)
+    cv2.imshow("box2", out2)
+    cv2.waitKey(1)
+    binary = cv2.inRange(out1, 254, 255)
+    binary2 = cv2.inRange(out2, 254, 255)
+    # 画素が1の画素数を数える。
+    cnt1 = cv2.countNonZero(binary)
+    cnt2 = cv2.countNonZero(binary2)
+
+    print(cnt1,cnt2)
+    if cnt1>3200 and cnt2>1900:
+        print("TT")
+        return 1
+
 
 
 def nomaldetect(out):
@@ -202,28 +225,28 @@ while(cap.isOpened()):
         D=curvedetect(out)
         if D==1:
             print(angle)
-            tar_cnt=tar_cnt+2
+            tar_cnt=tar_cnt+1
             navi,angle=target[tar_cnt]
-            print(navi)
+            print("next:"+navi)
             #print(target)
             
     elif navi=="t":
         #detectT
-        if D==1:
-            print(angle)
-            tar_cnt+=1
+        if D==Tdetect(out):
+            tar_cnt=tar_cnt+1
             navi,angle=target[tar_cnt]
+            print("next:"+navi)
     elif navi=="-":
         D=stopdetect(out)
         if D==1:
             print(angle)
             tar_cnt+=1
             navi,angle=target[tar_cnt]
-    
+            print("next:"+navi)
     #out=curvedetect(out)
     #stopdetect(out)
     #nomaldetect(out)
-
+    #v=Tdetect(out)
 
 
     out = cv2.cvtColor(out, cv2.COLOR_GRAY2BGR)

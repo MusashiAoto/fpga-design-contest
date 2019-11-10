@@ -4,7 +4,6 @@ import time
 
 
 
-
 fractal_controll=0
 minLineLength = 1000
 maxLineGap = 1
@@ -52,15 +51,21 @@ convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (Width,Height))
 before=230
 after=0
 
-
-def curvedetect():
+#hosei you
+def curvedetect(out):
     pxL = out[int(Height/4*3),int(Width/4)]
     pxR = out[int(Height/2),int(Width/4*3)]
+    pxC = out[226,488]
     #print(pxL)
     #print(pxR)
-    if pxR==pxL==255:
+    out=cv2.circle(out, (int(Width/4*3),int(Height/2)), 10, color=(0, 255, 0), thickness=-1)
+    out=cv2.circle(out, (int(Width/4),int(Height/4*3)), 10, color=(255, 0, 0), thickness=-1)
+    if pxR==pxL==255 :
         print("curve")
+        out=cv2.putText(out, 'Curve', (300, 170), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), thickness=2)
 
+
+    return out
 while(cap.isOpened()):
 
     #img1 = cv2.imread("frame.png", cv2.IMREAD_COLOR)
@@ -84,17 +89,24 @@ while(cap.isOpened()):
     
 
 
-    curvedetect()
+    out=curvedetect(out)
     out = cv2.cvtColor(out, cv2.COLOR_GRAY2BGR)
     # out = cv2.line(out,(int(Width/4),int(Height/2)),(int(Width/4),Height),(255,0, 0),5)
     # out = cv2.line(out,(0,int(Height/4*3)),(Width,int(Height/4*3)),(255,0, 0),5)
-    
+
+
+
+
+
     # out = cv2.line(out,(int(Width/4*3),0),(int(Width/4*3),Height),(0,255, 0),5)
     # out = cv2.line(out,(0,int(Height/2)),(Width,int(Height/2)),(0,255, 0),5)
 
     cv2.imshow("window_name", out)
     #time.sleep(0.05)
     convert_out.write(out)
+
+
+
     cv2.waitKey(1)
 convert_out.release()
 cv2.destroyAllWindows()

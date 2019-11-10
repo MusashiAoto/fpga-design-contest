@@ -15,6 +15,45 @@ contraststate=0
 fps=30
 Height=800
 Width=500
+magaru= cv2.imread("image/curve.png" , 0)
+oudan = cv2.imread("image/oudan.png" , 0)
+rT= cv2.imread("image/T.png" , 0)
+def detect(ip,detect_source):
+
+    # 対象画像を指定
+
+
+    # 画像をグレースケールで読み込み
+    gray_base_src = ip
+    gray_temp_src = detect_source
+
+    # マッチング結果書き出し準備
+    # 画像をBGRカラーで読み込み
+    #color_base_src = cv2.imread(base_image_path, 1)
+    #color_temp_src = cv2.imread(temp_image_path, 1)
+
+    # 特徴点の検出
+    type = cv2.AKAZE_create()
+    kp_01, des_01 = type.detectAndCompute(gray_base_src, None)
+    kp_02, des_02 = type.detectAndCompute(gray_temp_src, None)
+
+    # マッチング処理
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING)
+
+    try:
+        matches = bf.match(des_01, des_02)
+        matches = sorted(matches, key = lambda x:x.distance)
+        #mutch_image_src = cv2.drawMatches(color_base_src, kp_01, color_temp_src, kp_02, matches[:10], None, flags=2)
+
+
+        dist = [m.distance for m in matches]
+        ret = sum(dist) / len(dist)
+        #print(ret)
+        return ret
+    except :
+        print("E")
+        return 0
+
 
 
 def chokan(img):
@@ -58,16 +97,17 @@ def curvedetect(out):
     pxC = out[226,488]
     #print(pxL)
     #print(pxR)
-    out=cv2.circle(out, (int(Width/4*3),int(Height/2)), 10, color=(0, 255, 0), thickness=-1)
-    out=cv2.circle(out, (int(Width/4),int(Height/4*3)), 10, color=(255, 0, 0), thickness=-1)
+    #out=cv2.circle(out, (int(Width/4*3),int(Height/2)), 10, color=(0, 255, 0), thickness=-1)
+    #out=cv2.circle(out, (int(Width/4),int(Height/4*3)), 10, color=(255, 0, 0), thickness=-1)
     if pxR==pxL==255 :
         print("curve")
-        out=cv2.putText(out, 'Curve', (300, 170), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), thickness=2)
+        #out=cv2.putText(out, 'Curve', (300, 170), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), thickness=2)
 
 
     return out
+frame_cout=0
 while(cap.isOpened()):
-
+    frame_cout+=1
     #img1 = cv2.imread("frame.png", cv2.IMREAD_COLOR)
     # cv2.imshow('transform', img1)
     # cv2.waitKey(0)
@@ -88,8 +128,17 @@ while(cap.isOpened()):
     #print(ret2)
     
 
+    rt1=detect(out,magaru)
+    rt2=detect(out,oudan)
+    rt3=detect(out,rT)
 
-    out=curvedetect(out)
+    if rt1>rt2 and rt1>rt3:
+        print("curve")
+    elif rt2>rt1 and rt2>rt3:
+        print("oudan")
+    elif rt3>rt2 and rt3>rt1:
+        print("T")
+    #out=curvedetect(out)
     out = cv2.cvtColor(out, cv2.COLOR_GRAY2BGR)
     # out = cv2.line(out,(int(Width/4),int(Height/2)),(int(Width/4),Height),(255,0, 0),5)
     # out = cv2.line(out,(0,int(Height/4*3)),(Width,int(Height/4*3)),(255,0, 0),5)
@@ -97,11 +146,13 @@ while(cap.isOpened()):
 
 
 
-
+    
     # out = cv2.line(out,(int(Width/4*3),0),(int(Width/4*3),Height),(0,255, 0),5)
     # out = cv2.line(out,(0,int(Height/2)),(Width,int(Height/2)),(0,255, 0),5)
 
     cv2.imshow("window_name", out)
+    #name="movies/"+str(frame_cout)+".png"
+    #cv2.imwrite(name,out)
     #time.sleep(0.05)
     convert_out.write(out)
 

@@ -86,7 +86,7 @@ def chokan(img):
 
 
 
-cap = cv2.VideoCapture("output9.m4v")
+cap = cv2.VideoCapture("roadtest.mov")
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
 convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (Width,Height))
 
@@ -108,6 +108,53 @@ def curvedetect(out):
 
 
         return 1
+
+
+
+def curveV(out):
+
+    out1 = out[int(Height/3):int(Height/4*3),0:Width]
+    c=0
+    Vc=0
+    for x in range(int(Height/4*3)-int(Height/3)):
+        PC=out1[x,int(Width/4)]
+
+        if PC==255:
+            c=x
+            break
+    for x in range(int(Height/4*3)-int(Height/3)):
+        PV=out1[x,int(Width/4*3)]
+        if PV==255:
+            Vc=x
+            break
+    print(c,Vc)
+    if c-Vc<150 and 90<c-Vc:
+        print("curve")
+        #cv2.imwrite("detect.png",out1)
+        #out=cv2.putText(out, 'Curve', (300, 170), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), thickness=2)
+
+
+        #return 1
+
+    return out1
+
+    # pxL = out[int(Height/8*7),int(Width/4)]
+    # pxR = out[int(Height*0.625)+15,int(Width/4*3)]
+    # pxC = out[226,488]
+    # #print(pxL)
+    # #print(pxR)
+    # out=cv2.circle(out, (int(Width/4*3),int(Height*0.625)+15), 10, color=(0, 255, 0), thickness=-1)
+    # out=cv2.circle(out, (int(Width/4),int(Height/8*7)), 10, color=(255, 0, 0), thickness=-1)
+    # if pxR==pxL==255 :
+    #     print("curve")
+    #     #out=cv2.putText(out, 'Curve', (300, 170), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), thickness=2)
+
+
+    #     return 1
+
+
+
+
 
 def stopdetect(out):
     out = out[int(Height/2):int(Height/2+20),int(Width/4):int(Width/4*3)]
@@ -221,29 +268,29 @@ while(cap.isOpened()):
     #----------------Detectors--------------
 
 
-    if navi=="r":
-        D=curvedetect(out)
-        if D==1:
-            #print(angle)
-            tar_cnt=tar_cnt+1
-            navi,angleL,angleR=target[tar_cnt]
-            print("next:"+navi)
-            #print(target)
+    # if navi=="r":
+    #     D=curvedetect(out)
+    #     if D==1:
+    #         #print(angle)
+    #         tar_cnt=tar_cnt+1
+    #         navi,angleL,angleR=target[tar_cnt]
+    #         print("next:"+navi)
+    #         #print(target)
             
-    elif navi=="t":
-        #detectT
-        if D==Tdetect(out):
-            tar_cnt=tar_cnt+1
-            navi,angleL,angleR=target[tar_cnt]
-            print("next:"+navi)
-    elif navi=="-":
-        D=stopdetect(out)
-        if D==1:
-            #print(angle)
-            tar_cnt+=1
-            navi,angleL,angleR=target[tar_cnt]
-            print("next:"+navi)
-    #out=curvedetect(out)
+    # elif navi=="t":
+    #     #detectT
+    #     if D==Tdetect(out):
+    #         tar_cnt=tar_cnt+1
+    #         navi,angleL,angleR=target[tar_cnt]
+    #         print("next:"+navi)
+    # elif navi=="-":
+    #     D=stopdetect(out)
+    #     if D==1:
+    #         #print(angle)
+    #         tar_cnt+=1
+    #         navi,angleL,angleR=target[tar_cnt]
+    #         print("next:"+navi)
+    out=curveV(out)
     #stopdetect(out)
     #nomaldetect(out)
     #v=Tdetect(out)

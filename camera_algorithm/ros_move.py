@@ -123,18 +123,66 @@ after=0
 #hosei you
 def curvedetect(out):
     pxL = out[int(Height/8*7),int(Width/4)]
-    pxR = out[int(Height*0.625),int(Width/4*3)]
+    pxR = out[int(Height*0.625)+15,int(Width/4*3)]
     pxC = out[226,488]
     #print(pxL)
     #print(pxR)
-    #out=cv2.circle(out, (int(Width/4*3),int(Height/2)), 10, color=(0, 255, 0), thickness=-1)
-    #out=cv2.circle(out, (int(Width/4),int(Height/4*3)), 10, color=(255, 0, 0), thickness=-1)
-    if pxR==pxL==255 :
+    #out=cv2.circle(out, (int(Width/4*3),int(Height*0.625)+15), 10, color=(0, 255, 0), thickness=-1)
+    #out=cv2.circle(out, (int(Width/4),int(Height/8*7)), 10, color=(255, 0, 0), thickness=-1)
+    
+    for i in range(20):
+        pxL = out[int(Height/8*7)+i,int(Width/4)]
+        pxR = out[int(Height*0.625)+15+i,int(Width/4*3)]
+        if pxR==pxL==255 :
+            print("curve")
+            #out=cv2.putText(out, 'Curve', (300, 170), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), thickness=2)
+
+
+            return 1
+
+
+
+def curveV(out):
+
+    out1 = out[int(Height/3):int(Height/4*3),0:Width]
+    c=0
+    Vc=0
+    for x in range(int(Height/4*3)-int(Height/3)):
+        PC=out1[x,int(Width/4)]
+
+        if PC==255:
+            c=x
+            break
+    for x in range(int(Height/4*3)-int(Height/3)):
+        PV=out1[x,int(Width/4*3)]
+        if PV==255:
+            Vc=x
+            break
+    print(c,Vc)
+    if c-Vc<150 and 90<c-Vc:
         print("curve")
+        cv2.imwrite("detect.png",out1)
         #out=cv2.putText(out, 'Curve', (300, 170), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), thickness=2)
 
 
         return 1
+
+    # pxL = out[int(Height/8*7),int(Width/4)]
+    # pxR = out[int(Height*0.625)+15,int(Width/4*3)]
+    # pxC = out[226,488]
+    # #print(pxL)
+    # #print(pxR)
+    # out=cv2.circle(out, (int(Width/4*3),int(Height*0.625)+15), 10, color=(0, 255, 0), thickness=-1)
+    # out=cv2.circle(out, (int(Width/4),int(Height/8*7)), 10, color=(255, 0, 0), thickness=-1)
+    # if pxR==pxL==255 :
+    #     print("curve")
+    #     #out=cv2.putText(out, 'Curve', (300, 170), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), thickness=2)
+
+
+    #     return 1
+
+
+
 
 def stopdetect(out):
     out = out[int(Height/2):int(Height/2+20),int(Width/4):int(Width/4*3)]
@@ -170,7 +218,7 @@ def Tdetect(out):
     cnt1 = cv2.countNonZero(binary)
     cnt2 = cv2.countNonZero(binary2)
 
-    print(cnt1,cnt2)
+    #print(cnt1,cnt2)
     if cnt1>3200 and cnt2>1900:
         print("TT")
         return 1
@@ -180,12 +228,19 @@ def Tdetect(out):
 def nomaldetect(out,vel):
 
     pxL = out[int(Height/8*7),int(Width/4)+10]#kokodechosei
-
+    pxR = out[int(Height/8*7),int(Width/4*3)]
     if pxL==255:
-        vel.linear.x =-120 #L120
+        vel.linear.x =-80 #L120
         vel.linear.y =0 #R
         pub.publish(vel)
-        print("chosei")
+        print("choseiL")
+        sleep(0.03)
+    elif pxR==255:
+        vel.linear.x =0 #L120
+        vel.linear.y =-80#R
+        pub.publish(vel)
+        sleep(0.03)
+        print("choseiR")
 
 frame_cout=0
 target=[]
@@ -205,8 +260,8 @@ def readmap(map):
 
 
 def strate(vel):
-    vel.linear.x =-30
-    vel.linear.y =-30
+    vel.linear.x =-70
+    vel.linear.y =-70
     pub.publish(vel)
 
 
@@ -275,10 +330,19 @@ while(cap.isOpened()):
             vel.linear.x =float(angleL) #L120
             vel.linear.y = float(angleR)#R
             pub.publish(vel)
+            sleep(0.4)
+            vel.linear.x = -50 #L120
+            vel.linear.y = -50
+            pub.publish(vel)
+            sleep(0.8)
+            vel.linear.x =float(angleL) #L120
+            vel.linear.y = float(angleR)#R
+            pub.publish(vel)
+            sleep(0.7)
             tar_cnt=tar_cnt+1
             navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
-            sleep(1)
+            
             
             #print(target)
         else:

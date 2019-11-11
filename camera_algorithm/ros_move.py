@@ -111,7 +111,7 @@ def chokan(img):
 
 
 
-cap = cv2.VideoCapture("test_movie.m4v")
+cap = cv2.VideoCapture(1)
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
 convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (Width,Height))
 
@@ -159,9 +159,9 @@ def Tdetect(out):
     
     #print(int(Height/2),int(Width/4),int(Height/2+20),int(Width/4*3))
     #cv2.imwrite("aaa.png",out)
-    cv2.imshow("box1", out1)
-    cv2.imshow("box2", out2)
-    cv2.waitKey(1)
+    # cv2.imshow("box1", out1)
+    # cv2.imshow("box2", out2)
+    # cv2.waitKey(1)
     binary = cv2.inRange(out1, 254, 255)
     binary2 = cv2.inRange(out2, 254, 255)
     # 画素が1の画素数を数える。
@@ -175,11 +175,14 @@ def Tdetect(out):
 
 
 
-def nomaldetect(out):
+def nomaldetect(out,vel):
 
-    pxL = out[int(Height/8*7),int(Width/4)+5]#kokodechosei
+    pxL = out[int(Height/8*7),int(Width/4)+10]#kokodechosei
 
     if pxL==255:
+        vel.linear.x =-120 #L120
+        vel.linear.y =0 #R
+        pub.publish(vel)
         print("chosei")
 
 frame_cout=0
@@ -198,13 +201,29 @@ def readmap(map):
         target.append(i.split(','))
     
 
+
+def strate(vel):
+    vel.linear.x =-120
+    vel.linear.y =-130
+    pub.publish(vel)
+
+
 map = "yosen_map.txt"
 readmap(map)
 
 
 tar_cnt=0
-navi,angle=target[tar_cnt]
+navi,angleL,angleR=target[tar_cnt]
+
+#----------ROSserrial shokisettei--------
+rospy.init_node('vel_publisher')
+rospy.Subscriber('/light', UInt16, callback)
+vel = Twist()
+    
+
+start=time.time()
 while(cap.isOpened()):
+    est=time.time()
     frame_cout+=1
     if frame_cout==1:
         
@@ -249,25 +268,44 @@ while(cap.isOpened()):
     if navi=="r":
         D=curvedetect(out)
         if D==1:
-            print(angle)
+            #print(angle)
+            vel.linear.x =angleL #L120
+            vel.linear.y = angleR#R
+            pub.publish(vel)
             tar_cnt=tar_cnt+1
-            navi,angle=target[tar_cnt]
+            navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
+            
             #print(target)
+        else:
+            strate(vel)
             
     elif navi=="t":
         #detectT
         if D==Tdetect(out):
+            #print(angle)
+            vel.linear.x =angleL #L120
+            vel.linear.y = angleR#R
+            pub.publish(vel)
             tar_cnt=tar_cnt+1
-            navi,angle=target[tar_cnt]
+            navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
+        else:
+            strate(vel)
+            nomaldetect(out,vel)
     elif navi=="-":
         D=stopdetect(out)
         if D==1:
-            print(angle)
-            tar_cnt+=1
-            navi,angle=target[tar_cnt]
+            #print(angle)
+            vel.linear.x =angleL #L120
+            vel.linear.y = angleR#R
+            pub.publish(vel)
+            tar_cnt=tar_cnt+1
+            navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
+        else:
+            strate(vel)
+            nomaldetect(out,vel)
     #out=curvedetect(out)
     #stopdetect(out)
     #nomaldetect(out)
@@ -285,14 +323,15 @@ while(cap.isOpened()):
     # out = cv2.line(out,(int(Width/4*3),0),(int(Width/4*3),Height),(0,255, 0),5)
     # out = cv2.line(out,(0,int(Height/2)),(Width,int(Height/2)),(0,255, 0),5)
 
-    cv2.imshow("window_name", out)
+    #cv2.imshow("window_name", out)
     #name="movies/"+str(frame_cout)+".png"
     #cv2.imwrite(name,out)
     #time.sleep(0.05)
     convert_out.write(out)
 
+    if est-start>100:
+        break
 
-
-    cv2.waitKey(1)
+    #cv2.waitKey(1)
 convert_out.release()
-cv2.destroyAllWindows()
+#cv2.destroyAllWindows()

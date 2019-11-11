@@ -40,9 +40,8 @@ contraststate=0
 fps=30
 Height=850
 Width=500
-magaru= cv2.imread("image/curve.png" , 0)
-oudan = cv2.imread("image/oudan.png" , 0)
-rT= cv2.imread("image/T.png" , 0)
+camH=240
+camW=320
 
 
 front_time=time.time()
@@ -112,16 +111,19 @@ def chokan(img):
 
 
 cap = cv2.VideoCapture(1)
+cap.set(cv2.CAP_PROP_FPS, fps)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, camW)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, camH)
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
-convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (Width,Height))
+convert_out = cv2.VideoWriter('output9.m4v',fourcc, fps, (Width,Height))
 
 before=190
 after=0
 
 #hosei you
 def curvedetect(out):
-    pxL = out[int(Height/4*3),int(Width/4)]
-    pxR = out[int(Height/2),int(Width/4*3)]
+    pxL = out[int(Height/8*7),int(Width/4)]
+    pxR = out[int(Height*0.625),int(Width/4*3)]
     pxC = out[226,488]
     #print(pxL)
     #print(pxR)
@@ -203,8 +205,8 @@ def readmap(map):
 
 
 def strate(vel):
-    vel.linear.x =-120
-    vel.linear.y =-130
+    vel.linear.x =-30
+    vel.linear.y =-30
     pub.publish(vel)
 
 
@@ -214,6 +216,7 @@ readmap(map)
 
 tar_cnt=0
 navi,angleL,angleR=target[tar_cnt]
+print("fast"+ angleL +""+angleR)
 
 #----------ROSserrial shokisettei--------
 rospy.init_node('vel_publisher')
@@ -269,23 +272,25 @@ while(cap.isOpened()):
         D=curvedetect(out)
         if D==1:
             #print(angle)
-            vel.linear.x =angleL #L120
-            vel.linear.y = angleR#R
+            vel.linear.x =float(angleL) #L120
+            vel.linear.y = float(angleR)#R
             pub.publish(vel)
             tar_cnt=tar_cnt+1
             navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
+            sleep(1)
             
             #print(target)
         else:
             strate(vel)
+            #print("strate")
             
     elif navi=="t":
         #detectT
         if D==Tdetect(out):
             #print(angle)
-            vel.linear.x =angleL #L120
-            vel.linear.y = angleR#R
+            vel.linear.x =float(angleL) #L120
+            vel.linear.y = float(angleR)#R
             pub.publish(vel)
             tar_cnt=tar_cnt+1
             navi,angleL,angleR=target[tar_cnt]
@@ -297,8 +302,8 @@ while(cap.isOpened()):
         D=stopdetect(out)
         if D==1:
             #print(angle)
-            vel.linear.x =angleL #L120
-            vel.linear.y = angleR#R
+            vel.linear.x =float(angleL) #L120
+            vel.linear.y = float(angleR)#R
             pub.publish(vel)
             tar_cnt=tar_cnt+1
             navi,angleL,angleR=target[tar_cnt]

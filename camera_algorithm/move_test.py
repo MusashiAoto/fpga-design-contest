@@ -86,11 +86,11 @@ def chokan(img):
 
 
 
-cap = cv2.VideoCapture("roadtest.mov")
+cap = cv2.VideoCapture("output9.m4v")
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
 convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (Width,Height))
 
-before=230
+before=190
 after=0
 
 #hosei you
@@ -178,7 +178,7 @@ readmap(map)
 
 
 tar_cnt=0
-navi,angle=target[tar_cnt]
+navi,angleL,angleR=target[tar_cnt]
 while(cap.isOpened()):
     frame_cout+=1
     if frame_cout==1:
@@ -224,9 +224,9 @@ while(cap.isOpened()):
     if navi=="r":
         D=curvedetect(out)
         if D==1:
-            print(angle)
+            #print(angle)
             tar_cnt=tar_cnt+1
-            navi,angle=target[tar_cnt]
+            navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
             #print(target)
             
@@ -234,14 +234,14 @@ while(cap.isOpened()):
         #detectT
         if D==Tdetect(out):
             tar_cnt=tar_cnt+1
-            navi,angle=target[tar_cnt]
+            navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
     elif navi=="-":
         D=stopdetect(out)
         if D==1:
-            print(angle)
+            #print(angle)
             tar_cnt+=1
-            navi,angle=target[tar_cnt]
+            navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
     #out=curvedetect(out)
     #stopdetect(out)

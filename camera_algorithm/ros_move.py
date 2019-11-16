@@ -117,7 +117,7 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, camH)
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
 convert_out = cv2.VideoWriter('output9.m4v',fourcc, fps, (Width,Height))
 
-before=190
+before=200
 after=0
 
 #hosei you
@@ -234,13 +234,16 @@ def nomaldetect(out,vel):
         vel.linear.y =0 #R
         pub.publish(vel)
         print("choseiL")
-        sleep(0.03)
+        sleep(0.01)
+        return 1
     elif pxR==255:
         vel.linear.x =0 #L120
         vel.linear.y =-80#R
         pub.publish(vel)
-        sleep(0.03)
+        sleep(0.01)
         print("choseiR")
+        return 1
+    return 0
 
 frame_cout=0
 target=[]
@@ -334,11 +337,14 @@ while(cap.isOpened()):
             vel.linear.x = -50 #L120
             vel.linear.y = -50
             pub.publish(vel)
-            sleep(0.8)
+            sleep(1.3)
             vel.linear.x =float(angleL) #L120
             vel.linear.y = float(angleR)#R
             pub.publish(vel)
             sleep(0.7)
+
+
+            
             tar_cnt=tar_cnt+1
             navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
@@ -360,8 +366,9 @@ while(cap.isOpened()):
             navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
         else:
-            strate(vel)
-            nomaldetect(out,vel)
+            
+            if 0==nomaldetect(out,vel):
+                strate(vel)
     elif navi=="-":
         D=stopdetect(out)
         if D==1:
@@ -373,8 +380,8 @@ while(cap.isOpened()):
             navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
         else:
-            strate(vel)
-            nomaldetect(out,vel)
+            if 0==nomaldetect(out,vel):
+                strate(vel)
     #out=curvedetect(out)
     #stopdetect(out)
     #nomaldetect(out)

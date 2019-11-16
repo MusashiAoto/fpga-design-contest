@@ -117,7 +117,7 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, camH)
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
 convert_out = cv2.VideoWriter('output9.m4v',fourcc, fps, (Width,Height))
 
-before=200
+before=195
 after=0
 
 #hosei you
@@ -304,8 +304,9 @@ while(cap.isOpened()):
     imm= out
     out  = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
     ret2, otsu = cv2.threshold(out, 0, 255, cv2.THRESH_OTSU)
-    if abs(ret2-before)>30:
+    if abs(ret2-before)>20:
         ret,  out= cv2.threshold(out, before, 255, cv2.THRESH_BINARY)
+        #print(ret)
     else:
         before=ret2
         out=otsu
@@ -341,7 +342,7 @@ while(cap.isOpened()):
             vel.linear.x =float(angleL) #L120
             vel.linear.y = float(angleR)#R
             pub.publish(vel)
-            sleep(0.7)
+            sleep(0.8)
 
 
             
@@ -382,6 +383,11 @@ while(cap.isOpened()):
         else:
             if 0==nomaldetect(out,vel):
                 strate(vel)
+    elif navi=="s":
+            vel.linear.x =float(angleL) #L120
+            vel.linear.y = float(angleR)#R
+            pub.publish(vel)
+            break
     #out=curvedetect(out)
     #stopdetect(out)
     #nomaldetect(out)

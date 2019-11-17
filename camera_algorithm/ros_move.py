@@ -37,7 +37,7 @@ defcount=0
 Xpoint=145
 avecontrast=0
 contraststate=0
-fps=30
+fps=15
 Height=850
 Width=500
 camH=240
@@ -86,9 +86,9 @@ def detect(ip,detect_source):
 def chokan(img):
     img1=img
     height, width, channels = img.shape[:3]
-    hidariueX=int(width/320*100)
+    hidariueX=int(width/320*100)-5
     hidariueY=int(height/240*40)
-    migiueX=int(width/320*210)
+    migiueX=int(width/320*210)+5
     migiueY=int(height/240*40)
 
 
@@ -117,7 +117,10 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, camH)
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
 convert_out = cv2.VideoWriter('output9.m4v',fourcc, fps, (Width,Height))
 
-before=195
+fourccN = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
+convert_outN = cv2.VideoWriter('output1.m4v',fourccN, fps, (camW,camH))
+
+before=185
 after=0
 
 #hosei you
@@ -185,7 +188,7 @@ def curveV(out):
 
 
 def stopdetect(out):
-    out = out[int(Height/2):int(Height/2+20),int(Width/4):int(Width/4*3)]
+    out = out[int(Height/15*12):int(Height/16*15+18),int(Width/4):int(Width/4*3)]
 
     
     #print(int(Height/2),int(Width/4),int(Height/2+20),int(Width/4*3))
@@ -197,7 +200,7 @@ def stopdetect(out):
     # 画素が1の画素数を数える。
     cnt = cv2.countNonZero(binary)
 
-    if cnt>4000:
+    if cnt>1500:
         print("stop")
         return 1
 
@@ -227,7 +230,38 @@ def Tdetect(out):
 
 def nomaldetect(out,vel):
 
-    pxL = out[int(Height/8*7),int(Width/4)+10]#kokodechosei
+    pxL = out[int(Height/15*13),int(Width/4)+10]#kokodechosei
+    pxR = out[int(Height/8*7),int(Width/4*3)]
+    if pxL==255:
+        vel.linear.x =-40 #L120
+        vel.linear.y =0 #R
+        pub.publish(vel)
+        print("choseiL")
+        sleep(0.1)
+        vel.linear.x = -80 #L120
+        vel.linear.y = -80
+        pub.publish(vel)
+        return 1
+    # elif pxR==255:
+    #     vel.linear.x =0 #L120
+    #     vel.linear.y =-40#R
+    #     pub.publish(vel)
+    #     sleep(0.01)
+    #     print("choseiR")
+    #     return 1
+    return 0
+
+
+
+def kyodaidetect(out,vel):
+    kw=int(Width/4)+30
+    kh=int(Height/8*7)
+    for i in range(120):
+
+        pxL = out[kh,kw-i]#ある一定の高さの左サイドの白部分が目標値よりずれているかdetect
+        if pxL==255:
+            a=0
+
     pxR = out[int(Height/8*7),int(Width/4*3)]
     if pxL==255:
         vel.linear.x =-80 #L120
@@ -244,6 +278,9 @@ def nomaldetect(out,vel):
         print("choseiR")
         return 1
     return 0
+
+
+
 
 frame_cout=0
 target=[]
@@ -299,12 +336,15 @@ while(cap.isOpened()):
 
     ret,img1= cap.read()
     if ret==False:
+        print("read false break")
         break
+
+    convert_outN.write(img1)
     out=chokan(img1)
     imm= out
     out  = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
     ret2, otsu = cv2.threshold(out, 0, 255, cv2.THRESH_OTSU)
-    if abs(ret2-before)>20:
+    if abs(ret2-before)>2:
         ret,  out= cv2.threshold(out, before, 255, cv2.THRESH_BINARY)
         #print(ret)
     else:
@@ -338,13 +378,26 @@ while(cap.isOpened()):
             vel.linear.x = -50 #L120
             vel.linear.y = -50
             pub.publish(vel)
-            sleep(1.3)
+            sleep(1.6)
             vel.linear.x =float(angleL) #L120
             vel.linear.y = float(angleR)#R
             pub.publish(vel)
-            sleep(0.8)
+            sleep(0.7)
 
 
+
+            pxL = out[int(Height/8*7),int(Width/4)+10]#kokodechosei
+            # if pxL==255:
+            #     vel.linear.x =-40 #L120
+            #     vel.linear.y =0 #R
+            #     pub.publish(vel)
+            #     print("ccho")
+            #     sleep(0.02)
+
+
+
+
+            curvetime=time.time()
             
             tar_cnt=tar_cnt+1
             navi,angleL,angleR=target[tar_cnt]
@@ -357,7 +410,11 @@ while(cap.isOpened()):
             #print("strate")
             
     elif navi=="t":
-        #detectT
+        #detectT スキップ
+        tar_cnt=tar_cnt+1
+        navi,angleL,angleR=target[tar_cnt]
+        print("next:"+navi)
+
         if D==Tdetect(out):
             #print(angle)
             vel.linear.x =float(angleL) #L120
@@ -372,11 +429,17 @@ while(cap.isOpened()):
                 strate(vel)
     elif navi=="-":
         D=stopdetect(out)
-        if D==1:
+        if D==1 and time.time()-curvetime>6 :
             #print(angle)
             vel.linear.x =float(angleL) #L120
             vel.linear.y = float(angleR)#R
             pub.publish(vel)
+            sleep(8)
+
+            vel.linear.x =-40 #L120
+            vel.linear.y =-40 #R
+            pub.publish(vel)
+
             tar_cnt=tar_cnt+1
             navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
@@ -387,6 +450,7 @@ while(cap.isOpened()):
             vel.linear.x =float(angleL) #L120
             vel.linear.y = float(angleR)#R
             pub.publish(vel)
+            print("break")
             break
     #out=curvedetect(out)
     #stopdetect(out)
@@ -412,8 +476,13 @@ while(cap.isOpened()):
     convert_out.write(out)
 
     if est-start>100:
+        vel.linear.x =0 #L120
+        vel.linear.y =0#R
+        pub.publish(vel)
+        print("break")
         break
 
     #cv2.waitKey(1)
 convert_out.release()
+convert_outN.release()
 #cv2.destroyAllWindows()

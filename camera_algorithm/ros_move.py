@@ -252,32 +252,32 @@ def nomaldetect(out,vel):
     return 0
 
 
-
+# x47 y 641
+# x82
+# x23
 def kyodaidetect(out,vel):
-    kw=int(Width/4)+30
-    kh=int(Height/8*7)
-    for i in range(120):
-
-        pxL = out[kh,kw-i]#ある一定の高さの左サイドの白部分が目標値よりずれているかdetect
-        if pxL==255:
-            a=0
-
-    pxR = out[int(Height/8*7),int(Width/4*3)]
-    if pxL==255:
-        vel.linear.x =-80 #L120
+    pxL = out[641,23]#kokodechosei
+    pxC = out[641,47]
+    pxR = out[641,82]
+    if pxL==0 and pxC==0 and pxR==255:
+        vel.linear.x =-40 #L120
         vel.linear.y =0 #R
         pub.publish(vel)
         print("choseiL")
-        sleep(0.01)
-        return 1
-    elif pxR==255:
-        vel.linear.x =0 #L120
-        vel.linear.y =-80#R
+        sleep(0.05)
+        vel.linear.x = -80 #L120
+        vel.linear.y = -80
         pub.publish(vel)
-        sleep(0.01)
-        print("choseiR")
         return 1
+    # elif pxR==255:
+    #     vel.linear.x =0 #L120
+    #     vel.linear.y =-40#R
+    #     pub.publish(vel)
+    #     sleep(0.01)
+    #     print("choseiR")
+    #     return 1
     return 0
+
 
 
 
@@ -425,7 +425,7 @@ while(cap.isOpened()):
             print("next:"+navi)
         else:
             
-            if 0==nomaldetect(out,vel):
+            if 0==kyodaidetect(out,vel):
                 strate(vel)
     elif navi=="-":
         D=stopdetect(out)
@@ -444,7 +444,7 @@ while(cap.isOpened()):
             navi,angleL,angleR=target[tar_cnt]
             print("next:"+navi)
         else:
-            if 0==nomaldetect(out,vel):
+            if 0==kyodaidetect(out,vel):
                 strate(vel)
     elif navi=="s":
             vel.linear.x =float(angleL) #L120

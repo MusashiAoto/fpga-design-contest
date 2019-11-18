@@ -62,9 +62,9 @@ def detect(ip,detect_source):
 def chokan(img):
     img1=img
     height, width, channels = img.shape[:3]
-    hidariueX=int(width/320*100)
+    hidariueX=int(width/320*100)-20
     hidariueY=int(height/240*40)
-    migiueX=int(width/320*210)
+    migiueX=int(width/320*210)+20
     migiueY=int(height/240*40)
 
 
@@ -86,14 +86,17 @@ def chokan(img):
 
 
 
-cap = cv2.VideoCapture("roadtest.mov")
+cap = cv2.VideoCapture("output1.m4v")
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
-convert_out = cv2.VideoWriter('output2.m4v',fourcc, fps, (Width,Height))
+convert_out = cv2.VideoWriter('outpasdaderut2.m4v',fourcc, fps, (Width,Height))
 
-before=190
+before=185
 after=0
 
 #hosei you
+# x47 y 641
+# x82
+# x23
 def curvedetect(out):
     pxL = out[int(Height/4*3),int(Width/4)]
     pxR = out[int(Height/2),int(Width/4*3)]
@@ -268,29 +271,29 @@ while(cap.isOpened()):
     #----------------Detectors--------------
 
 
-    # if navi=="r":
-    #     D=curvedetect(out)
-    #     if D==1:
-    #         #print(angle)
-    #         tar_cnt=tar_cnt+1
-    #         navi,angleL,angleR=target[tar_cnt]
-    #         print("next:"+navi)
-    #         #print(target)
+    if navi=="r":
+        D=curvedetect(out)
+        if D==1:
+            #print(angle)
+            tar_cnt=tar_cnt+1
+            navi,angleL,angleR=target[tar_cnt]
+            print("next:"+navi)
+            #print(target)
             
-    # elif navi=="t":
-    #     #detectT
-    #     if D==Tdetect(out):
-    #         tar_cnt=tar_cnt+1
-    #         navi,angleL,angleR=target[tar_cnt]
-    #         print("next:"+navi)
-    # elif navi=="-":
-    #     D=stopdetect(out)
-    #     if D==1:
-    #         #print(angle)
-    #         tar_cnt+=1
-    #         navi,angleL,angleR=target[tar_cnt]
-    #         print("next:"+navi)
-    out=curveV(out)
+    elif navi=="t":
+        #detectT
+        if D==Tdetect(out):
+            tar_cnt=tar_cnt+1
+            navi,angleL,angleR=target[tar_cnt]
+            print("next:"+navi)
+    elif navi=="-":
+        D=stopdetect(out)
+        if D==1:
+            #print(angle)
+            tar_cnt+=1
+            navi,angleL,angleR=target[tar_cnt]
+            print("next:"+navi)
+    #out=curveV(out)
     #stopdetect(out)
     #nomaldetect(out)
     #v=Tdetect(out)
@@ -315,6 +318,6 @@ while(cap.isOpened()):
 
 
 
-    cv2.waitKey(1)
+    cv2.waitKey(0)
 convert_out.release()
 cv2.destroyAllWindows()

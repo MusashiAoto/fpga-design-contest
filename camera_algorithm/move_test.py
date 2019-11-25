@@ -17,8 +17,7 @@ Height=850
 Width=500
 magaru= cv2.imread("image/curve.png" , 0)
 oudan = cv2.imread("image/oudan.png" , 0)
-rT= cv2.imread("image/T.png" , 0)
-
+rT= cv2.imread("sozai/curve4.png" ,0)
 
 front_time=time.time()
 def detect(ip,detect_source):
@@ -86,7 +85,7 @@ def chokan(img):
 
 
 
-cap = cv2.VideoCapture("output1.m4v")
+cap = cv2.VideoCapture("output5.m4v")
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v') 
 convert_out = cv2.VideoWriter('outpasdaderut2.m4v',fourcc, fps, (Width,Height))
 
@@ -156,8 +155,42 @@ def curveV(out):
     #     return 1
 
 
+def dete(source,base):
+
+    
+    #画像をグレースケールで読み込む
+    #img = cv2.imread(source, 0)
+    #temp = cv2.imread(base, 0)
+    bairitu=0.4
+    img = cv2.resize(source, dsize=None, fx=bairitu, fy=bairitu)
+    temp=cv2.resize(base, dsize=None, fx=bairitu, fy=bairitu)
+
+    #マッチングテンプレートを実行
+    try:
+        result = cv2.matchTemplate(img, temp, cv2.TM_CCOEFF_NORMED)
+        #類似度の設定(0~1)
+        threshold = 0.9
+        #検出結果から検出領域の位置を取得
+        loc = np.where(result >= threshold)
+        #検出領域を四角で囲んで保存
+        result = img
+        w, h = temp.shape[::-1]
+        for top_left in zip(*loc[::-1]):
+            bottom_right = (top_left[0] + w, top_left[1] + h)
+        
+        cv2.rectangle(result,top_left, bottom_right, (255, 0, 0), 2)
+        cv2.imwrite("result2ss.png", result)
 
 
+        cv2.imshow("mutch_image_src", result)
+        #cv2.imshow("02_result08", mutch_image_src)
+
+        #cv2.waitKey(1)
+        print("detect")
+        return result
+    except :
+       
+        return source
 
 def stopdetect(out):
     out = out[int(Height/2):int(Height/2+20),int(Width/4):int(Width/4*3)]
@@ -229,6 +262,7 @@ readmap(map)
 
 tar_cnt=0
 navi,angleL,angleR=target[tar_cnt]
+i=0
 while(cap.isOpened()):
     frame_cout+=1
     if frame_cout==1:
@@ -271,32 +305,34 @@ while(cap.isOpened()):
     #----------------Detectors--------------
 
 
-    if navi=="r":
-        D=curvedetect(out)
-        if D==1:
-            #print(angle)
-            tar_cnt=tar_cnt+1
-            navi,angleL,angleR=target[tar_cnt]
-            print("next:"+navi)
-            #print(target)
+    # if navi=="r":
+    #     D=curvedetect(out)
+    #     if D==1:
+    #         #print(angle)
+    #         tar_cnt=tar_cnt+1
+    #         navi,angleL,angleR=target[tar_cnt]
+    #         print("next:"+navi)
+    #         #print(target)
             
-    elif navi=="t":
-        #detectT
-        if D==Tdetect(out):
-            tar_cnt=tar_cnt+1
-            navi,angleL,angleR=target[tar_cnt]
-            print("next:"+navi)
-    elif navi=="-":
-        D=stopdetect(out)
-        if D==1:
-            #print(angle)
-            tar_cnt+=1
-            navi,angleL,angleR=target[tar_cnt]
-            print("next:"+navi)
+    # elif navi=="t":
+    #     #detectT
+    #     if D==Tdetect(out):
+    #         tar_cnt=tar_cnt+1
+    #         navi,angleL,angleR=target[tar_cnt]
+    #         print("next:"+navi)
+    # elif navi=="-":
+    #     D=stopdetect(out)
+    #     if D==1:
+    #         #print(angle)
+    #         tar_cnt+=1
+    #         navi,angleL,angleR=target[tar_cnt]
+    #         print("next:"+navi)
+
+
     #out=curveV(out)
     #stopdetect(out)
     #nomaldetect(out)
-    #v=Tdetect(out)
+    out=dete(out,rT)
 
 
     out = cv2.cvtColor(out, cv2.COLOR_GRAY2BGR)
@@ -310,14 +346,16 @@ while(cap.isOpened()):
     # out = cv2.line(out,(int(Width/4*3),0),(int(Width/4*3),Height),(0,255, 0),5)
     # out = cv2.line(out,(0,int(Height/2)),(Width,int(Height/2)),(0,255, 0),5)
 
-    cv2.imshow("window_name", out)
+    #cv2.imshow("window_name", out)
     #name="movies/"+str(frame_cout)+".png"
     #cv2.imwrite(name,out)
     #time.sleep(0.05)
     convert_out.write(out)
+    #cv2.imwrite("img/"+ str(i)+".png",out)
+
+    #i+=1
 
 
-
-    cv2.waitKey(0)
+    #cv2.waitKey(0)
 convert_out.release()
 cv2.destroyAllWindows()

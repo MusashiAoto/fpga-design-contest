@@ -179,10 +179,10 @@ def dete(source,base):
             bottom_right = (top_left[0] + w, top_left[1] + h)
         
         cv2.rectangle(result,top_left, bottom_right, (255, 0, 0), 2)
-        cv2.imwrite("result2ss.png", result)
+        #cv2.imwrite("result2ss.png", result)
 
 
-        cv2.imshow("mutch_image_src", result)
+        #cv2.imshow("mutch_image_src", result)
         #cv2.imshow("02_result08", mutch_image_src)
 
         #cv2.waitKey(1)
@@ -190,7 +190,7 @@ def dete(source,base):
         return result
     except :
        
-        return source
+        return img
 
 def stopdetect(out):
     out = out[int(Height/2):int(Height/2+20),int(Width/4):int(Width/4*3)]
@@ -346,7 +346,7 @@ while(cap.isOpened()):
     # out = cv2.line(out,(int(Width/4*3),0),(int(Width/4*3),Height),(0,255, 0),5)
     # out = cv2.line(out,(0,int(Height/2)),(Width,int(Height/2)),(0,255, 0),5)
 
-    #cv2.imshow("window_name", out)
+    cv2.imshow("window_name", out)
     #name="movies/"+str(frame_cout)+".png"
     #cv2.imwrite(name,out)
     #time.sleep(0.05)
@@ -356,6 +356,6 @@ while(cap.isOpened()):
     #i+=1
 
 
-    #cv2.waitKey(0)
+    cv2.waitKey(1)
 convert_out.release()
 cv2.destroyAllWindows()
